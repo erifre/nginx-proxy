@@ -1,0 +1,30 @@
+--- a/nginx.tmpl
++++ b/nginx.tmpl
+@@ -320,7 +347,13 @@
+ 	{{ if $enable_ipv6 }}
+ 	listen [::]:{{ $external_http_port }} {{ $default_server }};
+ 	{{ end }}
++
++	{{ $disable_access_log := trim (or (first (groupByKeys $containers "Env.DISABLE_ACCESS_LOGS")) "") }}
++	{{ if $disable_access_log }}
++	access_log off;
++	{{ else }}
+ 	{{ $access_log }}
++	{{ end }}
+ 
+ 	# Do not HTTPS redirect Let'sEncrypt ACME challenge
+ 	location ^~ /.well-known/acme-challenge/ {
+@@ -351,7 +384,13 @@
+ 	{{ if $enable_ipv6 }}
+ 	listen [::]:{{ $external_https_port }} ssl http2 {{ $default_server }};
+ 	{{ end }}
++
++	{{ $disable_access_log := trim (or (first (groupByKeys $containers "Env.DISABLE_ACCESS_LOGS")) "") }}
++	{{ if $disable_access_log }}
++	access_log off;
++	{{ else }}
+ 	{{ $access_log }}
++	{{ end }}
+ 
+ 	{{ template "ssl_policy" (dict "ssl_policy" $ssl_policy) }}
+ 
