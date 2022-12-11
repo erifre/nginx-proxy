@@ -1,0 +1,18 @@
+--- a/nginx.tmpl
++++ b/nginx.tmpl
+@@ -120,6 +120,15 @@ upstream {{ .Upstream }} {
+         # {{ $container.Name }}
+         server {{ $containerNetwork.IP }}:{{ $address.Port }};
+                         {{ end }}
++                   {{ else if $container.Env.UPSTREAM_NAME }}
++                        {{ $server_found = "true" }}
++                       {{ if $container.Env.VIRTUAL_PORT }}
++        # non-docker: {{ $container.Name }}
++       server {{ $container.Env.UPSTREAM_NAME }}:{{ $container.Env.VIRTUAL_PORT }};
++                       {{ else }}
++        # non-docker: {{ $container.Name }}
++       server {{ $container.Env.UPSTREAM_NAME }};
++                       {{ end }}
+                     {{ else if $containerNetwork }}
+         # {{ $container.Name }}
+                         {{ if $containerNetwork.IP }}
